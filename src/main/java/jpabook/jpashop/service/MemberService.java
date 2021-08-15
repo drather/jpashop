@@ -12,7 +12,7 @@ import java.util.List;
 
 
 @Service
-@Transactional
+@Transactional  // read_only 를 주지 않으니까 됐음.
 //@AllArgsConstructor // 필드를 가지고, 생성자를 만들어주는 lombok annotation
 
 @RequiredArgsConstructor // final 에 있는 필드를 가지고, 생성자를 만들어주는 lombok annotation
