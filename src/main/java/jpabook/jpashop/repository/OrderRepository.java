@@ -96,4 +96,3 @@ public class OrderRepository {
         return query.getResultList();
     }
 }
-
