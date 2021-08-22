@@ -6,7 +6,8 @@
 <div class="container">
     <div th:replace="fragments/bodyHeader :: bodyHeader"/>
 
-    <form th:action="@{/items/new}" th:object="${form}" method="post">
+    <!-- form 객체를 받아서, 사용자 입력을 바탕으로 값을 채운 뒤 POST 방식으로 요청하는 부분 -->
+    <form th:action="@{/items/new}" th:object="${form}" method="post"> <!-- action 에 form 보낼 곳 명시-->
         <div class="form-group">
             <label th:for="name">상품명</label>
             <input type="text" th:field="*{name}" class="form-control" placeholder="이름을 입력하세요">

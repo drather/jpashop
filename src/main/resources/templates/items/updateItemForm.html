@@ -6,6 +6,7 @@
 <div class="container">
     <div th:replace="fragments/bodyHeader :: bodyHeader"/>
 
+    <!-- form 객체를 post 방식으로 넘길 예정임. -->
     <form th:object="${form}" method="post">
         <!-- id -->
         <input type="hidden" th:field="*{id}" />

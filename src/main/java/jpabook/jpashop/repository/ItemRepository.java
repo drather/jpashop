@@ -13,7 +13,7 @@ public class ItemRepository {
     public final EntityManager em;
 
     /**
-     * 상품 저장
+     * 상품 DB 에 저장하는 메서드
      * @param item
      */
     public void save(Item item) {

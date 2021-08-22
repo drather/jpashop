@@ -15,12 +15,25 @@ import java.util.List;
 public class ItemService {
     private final ItemRepository itemRepository;
 
+    /**
+     * Repository 에 해당 item 저장하라고 하는 메소드
+     * @param item
+     * @return itemId
+     */
     @Transactional
     public Long saveItem(Item item) {
         itemRepository.save(item);
         return item.getId();
     }
 
+    /**
+     * 인자로 넘겨받은 id를 가지고 item 을 찾고, 사용자의 수정사항을 수정하게끔 Repository 를 호출하는 메서드
+     * jpa 가 알아서 변경을 감지함.
+     * @param itemId
+     * @param name
+     * @param price
+     * @param stockQuantity
+     */
     @Transactional
     public void updateItem(Long itemId, String name, int price, int stockQuantity) {
         Item findItem = itemRepository.findOne(itemId);

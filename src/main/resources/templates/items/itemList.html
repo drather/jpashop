@@ -23,9 +23,13 @@
                 <td th:text="${item.name}"></td>
                 <td th:text="${item.price}"></td>
                 <td th:text="${item.stockQuantity}"></td>
+
+                <!-- 상품 정보 수정 버튼, 버튼 클릭할 시 item/{id}/edit 요청을 보내고, 파라미터로 id를 넘김 -->
                 <td>
                     <a href="#" th:href="@{/items/{id}/edit (id=${item.id})}" class="btn btn-primary" role="button">수정</a>
                 </td>
+                <!-- 상품 정보 수정 버튼 -->
+
             </tr>
             </tbody>
         </table>
