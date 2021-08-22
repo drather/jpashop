@@ -71,17 +71,21 @@ public class Order {
 
 
     //== 비즈니스 로직 ==//
+
     /**
-     * 주문 취소
+     * 주문 취소 메서드
      */
 
     public void cancel() {
+        // 해당 주문이 배송중 상태인 경우, 취소 불가함을 알림.
         if (delivery.getStatus() == DeliveryStatus.COMP) {
             throw new IllegalStateException("이미 배송 완료된 상품은 취소가 불가능합니다");
         }
 
+        // 그렇지 않은 경우, OrderStatus 를 Cancel로 함
         this.setStatus(OrderStatus.CANCEL);
 
+        // OrderItem 의 각 Item 들의 상태 또한 취소로 바꿈
         for (OrderItem orderItem : orderItems) {
             orderItem.cancel();
         }

@@ -60,6 +60,11 @@ public class OrderService {
         return order.getId();
     }
 
+    /**
+     * 해당 주문을 DB 에서 찾아오는 메서드
+     * 실제 cancel 에 해당하는 메서드는 Order 클래스에 정의되어 있음.
+     * @param orderId
+     */
     @Transactional
     public void cancelOrder(Long orderId) {
         // 주문 조회

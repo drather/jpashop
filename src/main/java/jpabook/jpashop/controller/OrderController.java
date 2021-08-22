@@ -79,6 +79,11 @@ public class OrderController {
         return "order/orderList";
     }
 
+    /**
+     * orderList.html 화면에서, 주문 취소 요청을 받아 처리하는 메서드
+     * @param orderId
+     * @return
+     */
     @PostMapping("orders/{orderId}/cancel")
     public String cancelOrder(@PathVariable("orderId") Long orderId) {
         orderService.cancelOrder(orderId);
