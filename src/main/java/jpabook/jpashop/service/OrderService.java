@@ -23,6 +23,17 @@ public class OrderService {
     private final MemberRepository memberRepository;
     private final ItemRepository itemRepository;
 
+    /**
+     * Id 를 바탕으로 각 member, item 을 찾아온다.
+     * 배송 정보를 생성한다.
+     * 주문상품 정보를 생성한다.
+     * 주문을 생성한다.
+     * 주문을 저장한다.
+     * @param memberId
+     * @param itemId
+     * @param count
+     * @return
+     */
     @Transactional
     public Long order(Long memberId, Long itemId, int count) {
         // 엔티티 조회
@@ -59,6 +70,12 @@ public class OrderService {
     }
 
     // 검색
+
+    /**
+     * 인자로 넘겨받은 orderSearch 에 있는 필드 중, 조건을 만족하는 order 를 모두 불러오는 코드
+     * @param orderSearch
+     * @return
+     */
      public List<Order> findOrders(OrderSearch orderSearch){
          return orderRepository.findAllByString(orderSearch);
      }

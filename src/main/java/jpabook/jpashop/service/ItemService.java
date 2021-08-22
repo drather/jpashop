@@ -46,10 +46,19 @@ public class ItemService {
 
     }
 
+    /**
+     * 모든 item 을 가져오도록 repository 를 호출하는 메서드
+     * @return items
+     */
     public List<Item> findItems() {
         return itemRepository.findAll();
     }
 
+    /**
+     * 해당 itemId 를 갖는 item 을 찾아오도록 repository 를 호출하는 메서드
+     * @param itemId
+     * @return item
+     */
     public Item findOne(Long itemId) {
         return itemRepository.findOne(itemId);
     }

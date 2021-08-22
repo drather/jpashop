@@ -17,6 +17,10 @@ import java.util.List;
 public class OrderRepository {
     private final EntityManager em;
 
+    /**
+     * 인자로 넘겨받은 order 를 추가한다.
+     * @param order
+     */
     public void save(Order order) {
         em.persist(order);
     }
@@ -27,11 +31,12 @@ public class OrderRepository {
 
     /**
      * 문자열로 쿼리 조립 및 실행, 권장 XX
+     * 너무 어려우므로, 나중에 다시 공부. 동적 쿼리 등을 공부해야 한다.
      * @param orderSearch
      * @return
      */
     public List<Order> findAllByString(OrderSearch orderSearch) {
-        //language=JPAQL
+        //language = JPAQL
         String jpql = "select o From Order o join o.member m";
         boolean isFirstCondition = true;
         //주문 상태 검색
