@@ -38,10 +38,11 @@ public class MemberService {
 
     private final MemberRepository memberRepository; // 변경될 일 없기에, final 로 지정
     // == 비즈니스 로직 == //
+
     /**
-     * 회원 가입
-     * @param: Member
-     * @return x
+     * Member 객체를 저장할 것을 Repository 에 전달하는 메서드
+     * @param member
+     * @return
      */
     public Long join(Member member) {
         validateDuplicateMember(member);
@@ -49,6 +50,10 @@ public class MemberService {
         return member.getId();
     }
 
+    /**
+     * 중복 검사하는 메서드. 중복 시 exception 투척
+     * @param member
+     */
     public void validateDuplicateMember(Member member) {
         /**
          * 중복 검사
@@ -61,12 +66,13 @@ public class MemberService {
         }
     }
 
+    /**
+     *
+     * @return
+     */
     @Transactional(readOnly = true) // jpa의 모든 데이터 변경 및 로직은 transaction 안에서 실행 & 최적화 이점
     // readOnly 는 읽기 전용.
     public List<Member> findMembers() {
-        /**
-         * 전체 조회
-         */
         return memberRepository.findAll();
     }
 

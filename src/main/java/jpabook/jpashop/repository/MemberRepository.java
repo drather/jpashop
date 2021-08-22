@@ -14,10 +14,20 @@ public class MemberRepository {
 
     private final EntityManager em;
 
+    /**
+     * DB 에 Member member 저장하는 메서드
+     * em.persist 사용에 주목?
+     * @param member
+     */
     public void save(Member member) {
         em.persist(member);
     }
 
+    /**
+     * id 를 통해 member 객체 찾는 메서드
+     * @param id
+     * @return
+     */
     public Member findOne(Long id) {
         return em.find(Member.class, id);
     }
