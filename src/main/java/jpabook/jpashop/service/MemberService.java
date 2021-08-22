@@ -67,15 +67,21 @@ public class MemberService {
     }
 
     /**
-     *
-     * @return
+     * Repository 에 회원 정보를 모두 가져오라고 명령하는 메서드
+     * @return members
      */
     @Transactional(readOnly = true) // jpa의 모든 데이터 변경 및 로직은 transaction 안에서 실행 & 최적화 이점
     // readOnly 는 읽기 전용.
     public List<Member> findMembers() {
+
         return memberRepository.findAll();
     }
 
+    /**
+     * Repositoty 에 회원 정보를 하나만 가져오라고 명령하는 메서드
+     * @param memberId
+     * @return member
+     */
     @Transactional(readOnly = true) // jpa의 모든 데이터 변경 및 로직은 transaction 안에서 실행 & 최적화 이점
     // readOnly 는 읽기 전용.
     public Member findOne(Long memberId) {

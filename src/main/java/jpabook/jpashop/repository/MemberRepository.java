@@ -32,11 +32,19 @@ public class MemberRepository {
         return em.find(Member.class, id);
     }
 
+    /**
+     * DB 에 JPQL 을 날려서, Member 객체를 모두 읽어오는 메서드
+     * @return members
+     */
     public List<Member> findAll() {
         return em.createQuery("select m from Member m", Member.class)
                 .getResultList();
     }
 
+    /**
+     * DB 에 JPQL 을 날려서, 해당 이름을 가진 Member 객체를 모두 읽어오는 메서드
+     * @return members
+     */
     public List<Member> findByName(String name) {
         return em.createQuery("select m from Member m where m.name = :name", Member.class)
                 .setParameter("name", name)

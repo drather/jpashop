@@ -71,7 +71,7 @@ public class MemberController {
      */
     @GetMapping("/members")
     public String list(Model model) {
-        // memberService.findMembers() -> memberRepository.findAll() 을 통해 members에 화원 정보 저장
+        // memberService.findMembers() -> memberRepository.findAll() 을 통해 화원 정보 불러와서 members에 저장
         List<Member> members = memberService.findMembers();
 
         // model 에 데이터 추가 후 리턴
