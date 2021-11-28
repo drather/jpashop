@@ -94,4 +94,44 @@ public class OrderSimpleApiController {
             address = order.getDelivery().getAddress(); // 이 시점에서 Lazy 초기화. 영속성 컨텍스트가 id를 가지고 멤버를 찾아봄.
         }
     }
+
+    /**
+     * fetch join 을 통해 주문을 조회하는 API
+     * 한 번의 쿼리로, Order, Member, Delivery 세 엔티티를 모두 조회해서 가져온다.
+     * 다음 쿼리가 나간다.
+     * select
+     *  order0_.order_id as order_id1_6_0_,
+     *  member1_.member_id as member_i1_4_1_,
+     *  delivery2_.id as id1_2_2_,
+     *  order0_.delivery_id as delivery4_6_0_,
+     *  order0_.member_id as member_i5_6_0_,
+     *  order0_.order_date as order_da2_6_0_,
+     *  order0_.status as status3_6_0_,
+     *  member1_.city as city2_4_1_,
+     *  member1_.street as street3_4_1_,
+     *  member1_.zipcode as zipcode4_4_1_,
+     *  member1_.name as name5_4_1_,
+     *  delivery2_.city as city2_2_2_,
+     *  delivery2_.street as street3_2_2_,
+     *  delivery2_.zipcode as zipcode4_2_2_,
+     *  delivery2_.status as status5_2_2_
+     * from
+     *  orders order0_ inner join member member1_
+     *  on order0_.member_id=member1_.member_id inner join delivery delivery2_
+     *  on order0_.delivery_id=delivery2_.id
+     *
+     *  그러나 단점이 있다.
+     *  엔티티의 값들을 모두 긁어왔다는 점이 문제.
+     *  다음 시간에, 이것까지 최적화 해보겠다.
+     * @return
+     */
+    @GetMapping("api/v3/simple-orders")
+    public List<SimpleOrderDto> ordersV3() {
+        List<Order> orders = orderRepository.findAllWithMemberDelivery();
+
+        List<SimpleOrderDto> results = orders.stream()
+                .map(o -> new SimpleOrderDto(o))
+                .collect(Collectors.toList());
+        return results;
+    }
 }

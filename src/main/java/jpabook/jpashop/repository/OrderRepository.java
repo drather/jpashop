@@ -100,4 +100,23 @@ public class OrderRepository {
         TypedQuery<Order> query = em.createQuery(cq).setMaxResults(1000);
         return query.getResultList();
     }
+
+    /**
+     * order 를 조회하는데, Member 와 Delivery 를 조인하면서, SELECT 절에서 다 가져옴
+     * 한번의 쿼리로 Order 와 Member, Delivery 를 조인한 뒤, SELECT 에 다넣고 다 가져옴
+     * 이 경우, fetch = LAZY 를 다 무시하고, 모든 값을 다 가져온다.
+     * 이러한 경우를 fetch join 이라고 한다.
+     *
+     * 기술적으로는 SQL 에 join 을 사용한다.
+     * join fetch 는 깊이가 있는 기술이며, 실무에서 많이 사용하기 때문에 100% 이해할 것.
+     * @return
+     */
+    public List<Order> findAllWithMemberDelivery() {
+        return em.createQuery(
+                "select o from Order o" +
+                        " join fetch o.member m" +
+                        " join fetch o.delivery d", Order.class
+        ).getResultList();
+
+    }
 }
