@@ -1,9 +1,11 @@
 package jpabook.jpashop.api;
 
+import javassist.Loader;
 import jpabook.jpashop.domain.Address;
 import jpabook.jpashop.domain.OrderStatus;
 import jpabook.jpashop.repository.OrderRepository;
 import jpabook.jpashop.repository.OrderSearch;
+import jpabook.jpashop.repository.OrderSimpleQueryDto;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -133,5 +135,33 @@ public class OrderSimpleApiController {
                 .map(o -> new SimpleOrderDto(o))
                 .collect(Collectors.toList());
         return results;
+    }
+
+    /**
+     * 엔티티를 조회한 후, DTO 로 변환을 했었다.
+     * 변환하는 과정 없이, 바로 JPA 에서 DTO 로 꺼낼 수 있다면 성능 최적화를 할 수 있다.
+     *
+     * 일반적인 SQL 을 사용할 때처럼 원하는 값을 선택해서 조회
+     * new 명령어를 사용해서 jPQL 의 결과를 즉시 DTO 로 전환
+     *
+     * 정리
+     * V3 과 V4 는 우열을 가리기 힘들다.
+     * 왜냐하면, V4 가 성능 최적화는 되었지만, 재사용성이 떨어진다. 해당 DTO 를 사용하지 않으면 사용할 수 없음.
+     * DTO 로 조회한 것은 재사용성이 떨어짐.
+     * 또한 코드가 지저분해진다.
+     * 그러나 V3 는 여러 API 에서 사용할 수 있으며, 깔끔하다.
+     *
+     * repository 에 API 스펙에 관련된 로직이 들어오는 것은 좋지 않다. aPI 스펙이 바뀌면 그 repository 의 로직을 다 뜯어고쳐야 하기 때문
+     * reposirory 는 가급적 entity 를 조회하는 데에만 사용하는 것이 좋다.
+     * 그말인 즉슨, 계층간의 분리가 이뤄지지 않는다는 뜻.
+     * 또한, 성능 최적화의 효과가 그렇게 크지 않음.
+     *
+     * 따라서, repository 에 이러한 쿼리를 넣는 것 보다는,
+     * 따로 디렉토리를 만들고 (simpleQuery), 그것에 dto 와 해당 유형 repository 를 모아놓는 것이 좋다.
+     * @return
+     */
+    @GetMapping("api/v4/simple-orders")
+    public List<OrderSimpleQueryDto> ordersV4() {
+        return orderRepository.findOrderDtos();
     }
 }
