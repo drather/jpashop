@@ -126,4 +126,48 @@ public class OrderRepository {
                         " join o.delivery d", OrderSimpleQueryDto.class // <- 이 부분에서, OrderSimpleQueryDto 와 매핑 x
                 ).getResultList();
     }
+
+    /**
+     * fetch join 을 통한 주문 내역 조회 API
+     * Order(2개) 와 OrderItem(4개) 을 join -> 조회되는 order 의 수는 4개
+     * 중복돼서 조회된 Order 두 쌍은 id값까지 똑같음
+     * 우리는 중복없이 2개의 order 가 필요함.
+     * 즉, 하나의 order 가 orderItems 의 수만큼 들어난 데이터가 조회됨
+     *
+     * 따라서, `distinct` 키워드를 통해서 중복을 제거하는 기능을 수행해야 함
+     * 실제 SQL 에서도 distinct 키워드가 SELECT 문에서 동작함
+     *
+     * SQL 에서의 distinct 는, 모든 row 가 똑같아야 중복을 제거함.
+     * JPA 에서의 distinct 는, application 단으로 가져와서, order 의 ID 값이 같으면,
+     * 중복된 order 를 제거한 채로 리턴함.
+     * 즉, order 객체의 id 에 대해서 중복을 제거한다고 볼 수 있음.
+     *
+     * v2 에서는 지연 로딩으로 인해 10 번의 쿼리가 나가던 것이, 1번의 쿼리로 해결됨
+     *
+     * 그러나, 일대다를 fetch join 하는 순간, 페이징이 불가하게 됨.
+     * firstResult/maxResult specified with collection fetch; applying in memory
+     * 위 WARNING 이 뜨게 됨.
+     * 즉, 모든 데이터를 메모리에서 페이징 처리를 하겠다는 의미.
+     * 만약 데이터가 10000개가 있다면, 10000개를 memory 에 올려놓고 페이징 처리를 하겠다는 뜻.
+     *
+     * 일대다 조인을 통해 DB 를 조회하면서, order 를 기준으로 row 를 paging 할 수 없음 (order 에 대한 기준이 틀어져서)
+     * 따라서, orderItem 으로 offset 을 잡고, paging 처리를 하게 됨
+     * 그래서, 어쩔 수 없이, hibernate 는 경고를 내고 memory 에 올려놓고 paging 처리를 함
+     *
+     * member, delivery 같이, xToOne 관계의 엔티티는 fetch join 만으로도 충분
+     * order - orderItem 은 fetch join 불가능!
+     *
+     * 컬렉션 페치 조인은 1개만 사용할 수 있다. 즉, 컬렉션 둘 이상에 fetch join 을 사용하면 안된다
+     * 1 * N * M 만큼의 데이터가 부정합하게 조회될 수 있으며,
+     * @return
+     */
+    public List<Order> findAllWithItem() {
+        return em.createQuery(
+                "select distinct o from Order o" +
+                        " join fetch o.member m" +
+                        " join fetch o.delivery d" +
+                        " join fetch o.orderItems oi" +
+                        " join fetch oi.item", Order.class)
+                .getResultList();
+    }
 }
