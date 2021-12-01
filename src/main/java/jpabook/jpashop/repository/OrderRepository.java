@@ -108,6 +108,8 @@ public class OrderRepository {
      *
      * 기술적으로는 SQL 에 join 을 사용한다.
      * join fetch 는 깊이가 있는 기술이며, 실무에서 많이 사용하기 때문에 100% 이해할 것.
+     *
+     * paging 가능
      * @return
      */
     public List<Order> findAllWithMemberDelivery() {
@@ -158,7 +160,7 @@ public class OrderRepository {
      * order - orderItem 은 fetch join 불가능!
      *
      * 컬렉션 페치 조인은 1개만 사용할 수 있다. 즉, 컬렉션 둘 이상에 fetch join 을 사용하면 안된다
-     * 1 * N * M 만큼의 데이터가 부정합하게 조회될 수 있으며,
+     * 1 * N * M 만큼의 데이터가 부정합하게 조회될 수 있으며, 이는 에러를 야기한다.
      * @return
      */
     public List<Order> findAllWithItem() {
@@ -168,6 +170,23 @@ public class OrderRepository {
                         " join fetch o.delivery d" +
                         " join fetch o.orderItems oi" +
                         " join fetch oi.item", Order.class)
+                .getResultList();
+    }
+
+    /**
+     * offset 과 limit 을 가지고, order 와 xToOne 관계인 엔티티 member, delivery 를,
+     * fetch join + paging 으로 가져오는 메서드
+     * @param offset
+     * @param limit
+     * @return
+     */
+    public List<Order> findAllWithMemberDelivery(int offset, int limit) {
+        return em.createQuery(
+                "select o from Order o" +
+                        " join fetch o.member m" +
+                        " join fetch o.delivery d", Order.class)
+                .setFirstResult(offset)
+                .setMaxResults(limit)
                 .getResultList();
     }
 }
