@@ -6,6 +6,8 @@ import jpabook.jpashop.domain.OrderItem;
 import jpabook.jpashop.domain.OrderStatus;
 import jpabook.jpashop.repository.OrderRepository;
 import jpabook.jpashop.repository.OrderSearch;
+import jpabook.jpashop.repository.order.query.OrderFlatDto;
+import jpabook.jpashop.repository.order.query.OrderItemQueryDto;
 import jpabook.jpashop.repository.order.query.OrderQueryDto;
 import jpabook.jpashop.repository.order.query.OrderQueryRepository;
 import lombok.Data;
@@ -18,7 +20,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -45,10 +47,10 @@ public class OrderApiController {
      * 이 경우, orderItems 가 null 로 출력된다.
      * orderItems 가 엔티티이기 때문임.
      * 따라서, orderItems 를 강제초기화 해야 함
-     *
+     * <p>
      * 그러나, 아직 response 에는 엔티티가 있음. (OrderItem)
      * OrderItem 까지 DTO 로 바꿔줘야 함
-     *
+     * <p>
      * SQL 은 얼마나 나갈까?
      * order 조회 2건
      * member 조회 1번
@@ -56,8 +58,9 @@ public class OrderApiController {
      * orderItems 조회 2번.
      * item 조회 1번
      * 즉, 총 2 * ( 1 + 1 + 2 + 1 ) = 10번 의 쿼리가 나가게 된다. (정답인지는 모름)
-     *
+     * <p>
      * 이를 fetch join 을 통해 다음에 해결할 것.
+     *
      * @return
      */
     @GetMapping("/api/v2/orders")
@@ -116,7 +119,7 @@ public class OrderApiController {
 
     @GetMapping("/api/v3.1/orders")
     public List<OrderDto> ordersV3_page(
-            @RequestParam(value="offset", defaultValue = "0" ) int offset,
+            @RequestParam(value = "offset", defaultValue = "0") int offset,
             @RequestParam(value = "limit", defaultValue = "100") int limit) {
 
         List<Order> orders = orderRepository.findAllWithMemberDelivery(offset, limit);
@@ -135,6 +138,20 @@ public class OrderApiController {
     @GetMapping("/api/v5/orders")
     public List<OrderQueryDto> ordersV5() {
         return orderQueryRepository.findAllByDto_optimization();
+    }
+
+    @GetMapping("/api/v6/orders")
+    public List<OrderFlatDto> ordersV6() {
+        List<OrderFlatDto> flats = orderQueryRepository.findAllByDto_flat();
+
+        return flats;
+//
+//        return flats.stream()
+//                .collect(groupingBy(o -> new OrderQueryDto(o.getOrderId(), o.getName(), o.getOrderDate(), o.getOrderStatus(), o.getAddress(), o.getValue()),
+//                        mapping(o -> new OrderItemQueryDto(o.getOrderId(), o.getItemName(), o.getOrderPrice(), o.getCount()), toList())
+//                )).entrySet().stream()
+//                .map(e -> new OrderQueryDto(e.getKey().getOrderId(), e.getKey().getName(), e.getKey().getOrderDate(), e.getKey().getOrderStatus(), e.getKey().getAddress(), e.getValue()))
+//                .collect(toList());
     }
 }
 
