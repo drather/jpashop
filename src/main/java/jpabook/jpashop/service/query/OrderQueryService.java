@@ -7,7 +7,8 @@ import org.springframework.transaction.annotation.Transactional;
  * 아래에 변환 로직을 넣어두면, 영속성 컨텍스트와 DB session 을 들고 있다.
  * 따라서 로직을 수행할 수 있다.
  */
-@Transactional(readOnly = true)
-public class OrderQueryService {
-
-}
+//@Transactional(readOnly = true)
+//@Service
+//public class OrderQueryService {
+//
+//}
