@@ -10,6 +10,7 @@ import jpabook.jpashop.repository.order.query.OrderFlatDto;
 import jpabook.jpashop.repository.order.query.OrderItemQueryDto;
 import jpabook.jpashop.repository.order.query.OrderQueryDto;
 import jpabook.jpashop.repository.order.query.OrderQueryRepository;
+import jpabook.jpashop.service.query.OrderQueryService;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,11 +28,20 @@ import static java.util.stream.Collectors.*;
 public class OrderApiController {
 
     private final OrderRepository orderRepository;
+    private final OrderQueryService orderQueryService;
     private final OrderQueryRepository orderQueryRepository;
 
     @GetMapping("/api/v1/orders")
     public List<Order> ordersV1() {
         List<Order> all = orderRepository.findAllByString(new OrderSearch());
+
+        // == OSIV 관련 내용 == //
+        // OSIV 를 끄게 되면, 아래 로직에서 오류가 발생한다.
+        // findAllByString 을 통해 데이터를 가져온 뒤, DB Connection 과 영속성 컨텍스트를 반환했기 때문이다.
+        // OSIV 를 끈 채 아래 기능을 수행하게 하려면, fetch join 을 사용해야 한다.
+        // 즉, transaction 안에서 모든 기능을 수행해야 한다.
+        // 이는, 아래 코드같이, 영속성 컨텍스트의 지연로딩 기능을 사용해야 하는 영역을 service 에 줘야 한다는 뜻이다.
+
 
         for (Order order : all) {
             order.getMember().getName();

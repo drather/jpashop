@@ -37,6 +37,4 @@ public class OrderFlatDto {
         this.orderPrice = orderPrice;
         this.count = count;
     }
-
-
 }
